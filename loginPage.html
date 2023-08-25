@@ -22,6 +22,15 @@
   <script type="text/babel">
     
     function LoginPage() {
+
+      // es6
+      // shorthand
+      const loginMe = (evt) => {
+        evt.preventDefault()
+
+        alert('Login me clicked')
+      }
+
       return (
 
         <div>
@@ -45,7 +54,7 @@
           <div class="container w-25" style={{ marginTop: "30px" }}>
             <h3>Login</h3>
 
-            <form>
+            <form onSubmit={loginMe}>
               
               <label class="form-label" for="username">Username</label>
               <input required class="form-control" type="text" name="username" id="username" />
