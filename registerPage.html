@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module C - Register Page</title>
+
+    <link rel="stylesheet" href="lib/bootstrap.min.css">
+    <script src="lib/bootstrap.min.js"></script>
+    <script src="lib/jquery.slim.min.js"></script>
+
+    <script src="lib/react.development.js"></script>
+    <script src="lib/react-dom.development.js"></script>
+    <script src="lib/babel.min.js"></script>
+  </head>
+
+  <body>
+    <div id="root"></div>
+  </body>
+
+  <script type="text/babel">
+    
+    function RegisterPage() {
+
+      // es6
+      // shorthand
+      const registerMe = (evt) => {
+        evt.preventDefault()
+
+        // verify the password with confirm password
+
+        const password = evt.target['password'].value
+        const confirm_password = evt.target['confirm_password'].value
+
+        if(password !== confirm_password) {
+          alert('Password not match')
+          return;
+        }
+
+        alert('Register success')
+      }
+
+      return (
+
+        <div>
+          
+          <nav className="navbar navbar-expand-lg bg-body-tertiary">
+            <div className="container-fluid">
+              <a className="navbar-brand" href="#">My Sketch</a>
+
+              <div className="navbar-nav">
+                <a className="nav-link" aria-current="page" href="#">Index</a>
+                <a className="nav-link" href="#">List</a>
+                <a className="nav-link" href="#">Sketch</a>
+                <a className="nav-link">Login</a>
+                <a className="nav-link">Logout</a>
+
+                <a className="nav-link">Name Goes Here</a>
+              </div>
+            </div>
+          </nav>
+
+          <div className="container w-25" style={{ marginTop: "30px" }}>
+            <h3>Register</h3>
+
+            <form onSubmit={registerMe}>
+              
+              <label className="form-label" htmlFor="username">Username</label>
+              <input required className="form-control" type="text" name="username" id="username" />
+              
+              <label className="form-label" htmlFor="password">Password</label>
+              <input required className="form-control" type="password" name="password" id="password" />
+
+              <label className="form-label" htmlFor="confirm_password">Confirm Password</label>
+              <input required className="form-control" type="password" name="confirm_password" id="confirm_password" />
+              
+              <input type="submit" className="btn btn-primary" style={{ marginTop: "10px" }} />
+              <input type="reset" className="btn btn-light" style={{ marginTop: 10, marginLeft: 5 }} />
+            </form>
+          </div>
+        </div>
+      );
+    }
+
+    const container = document.getElementById('root');
+    const root = ReactDOM.createRoot(container);
+    root.render(<RegisterPage />)
+  </script>
+</html>
