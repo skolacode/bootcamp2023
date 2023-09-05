@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <link rel="stylesheet" href="lib/bootstrap.min.css">
+  <script src="lib/bootstrap.min.js"></script>
+  <script src="lib/jquery.slim.min.js"></script>
+
+  <script src="lib/react.development.js"></script>
+  <script src="lib/react-dom.development.js"></script>
+  <script src="lib/babel.min.js"></script>
+
+  <script src="js/localstorage.js"></script>
+  <script src="js/users.js"></script>
+
+  <script>
+    $( document ).ready(function() {
+      const userData = localStorage.getItem('loginUser')
+      const user = JSON.parse(userData)
+
+      $("#user-name").html(user.name)
+    });
+  </script>
+</head>
+<body>
+
+  <div>
+
+    <nav className="navbar navbar-expand-lg bg-body-tertiary">
+      <div className="container-fluid">
+        <a className="navbar-brand" href="#">My Sketch</a>
+
+        <div className="navbar-nav">
+          <a className="nav-link" href="registerPage.html">Register</a>
+          <a className="nav-link">Logout</a>
+
+          <a className="nav-link" id="user-name">Name Goes Here</a>
+        </div>
+      </div>
+    </nav>
+
+    <h1>Login success</h1>
+
+  </div>
+</body>
+</html>
