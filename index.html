@@ -13,15 +13,33 @@
     <script src="lib/react.development.js"></script>
     <script src="lib/react-dom.development.js"></script>
     <script src="lib/babel.min.js"></script>
+
+    <script src="lib/dexie.min.js"></script>
+    <script src="dixie.js"></script>
+
+    <script src="js/localstorage.js"></script>
   </head>
 
   <body>
     <div id="root"></div>
   </body>
 
+  <!-- Async -->
+  <!-- Sync -->
+
   <script type="text/babel">
     function Hello() {
-      return <h1>Hello World React!</h1>;
+
+      const addUser = async () => {
+        saveData('user', 'hello')
+      }
+
+      return (
+        <div>
+          <h1>Hello World React!</h1>
+          <button onClick={addUser}>Add User</button>
+        </div>
+      );
     }
 
     const container = document.getElementById('root');
