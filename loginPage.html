@@ -21,17 +21,6 @@
     <div id="root"></div>
   </body>
 
-  <script>
-    $(document).ready(async () => {
-
-      const oldFriends = await db.friends
-      .where('age').above(75)
-      .toArray();
-
-      console.log('oldFriends: ', oldFriends)
-    });
-  </script>
-
   <script type="text/babel">
     
     function LoginPage() {
