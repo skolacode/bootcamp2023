@@ -13,6 +13,9 @@
     <script src="lib/react.development.js"></script>
     <script src="lib/react-dom.development.js"></script>
     <script src="lib/babel.min.js"></script>
+
+    <script src="js/localstorage.js"></script>
+    <script src="js/users.js"></script>
   </head>
 
   <body>
@@ -51,6 +54,11 @@
           return;
         }
 
+        
+        // TODO > save the user details in local storage
+        const username = evt.target['username'].value
+        saveUser(username, password)
+        
         alert('Register success')
 
         // upon register success, redirect to login page
