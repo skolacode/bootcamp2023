@@ -15,6 +15,7 @@
     <script src="lib/babel.min.js"></script>
 
     <script src="js/localstorage.js"></script>
+    <script src="js/users.js"></script>
   </head>
 
   <body>
@@ -30,15 +31,15 @@
       const loginMe = (evt) => {
         evt.preventDefault()
 
-        alert('Login me clicked')
-      }
+        const password = evt.target['password'].value
+        const username = evt.target['username'].value
 
-      const getUser = (evt) => {
-        evt.preventDefault()
+        const user = getUser(username, password)
 
-        const data = getData('user')
+        if(user) {
+          window.location.href = 'landingPage.html'
+        }
 
-        alert(data)
       }
 
       return (
@@ -61,7 +62,7 @@
           <div className="container w-25" style={{ marginTop: "30px" }}>
             <h3>Login</h3>
 
-            <form onSubmit={getUser}>
+            <form onSubmit={loginMe}>
               
               <label className="form-label" htmlFor="username">Username</label>
               <input required className="form-control" type="text" name="username" id="username" />
