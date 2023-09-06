@@ -50,3 +50,7 @@ function getUser(username, password) {
     return false
   }
 }
+
+function logoutUser() {
+  localStorage.removeItem('loginUser')
+}

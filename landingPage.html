@@ -25,25 +25,44 @@
     });
   </script>
 </head>
-<body>
+  <body>
+    <div id="root"></div>
+  </body>
 
-  <div>
+  <script type="text/babel">
+    
+    const LandingPage = () => {
 
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">My Sketch</a>
+      const logMeOut = () => {
+        logoutUser()
+        window.location.href = 'loginPage.html'
+      }
 
-        <div class="navbar-nav">
-          <a class="nav-link" href="registerPage.html">Register</a>
-          <a class="nav-link">Logout</a>
+      return (
+        <div>
 
-          <a class="nav-link" id="user-name">Name Goes Here</a>
+          <nav className="navbar navbar-expand-lg bg-body-tertiary">
+            <div className="container-fluid">
+              <a className="navbar-brand" href="#">My Sketch</a>
+
+              <div className="navbar-nav">
+                <a className="nav-link" href="registerPage.html">Register</a>
+                <a type="button" className="nav-link" onClick={logMeOut}>Logout</a>
+
+                <a className="nav-link" id="user-name">Name Goes Here</a>
+              </div>
+            </div>
+          </nav>
+
+          <h1>Login success --</h1>
+
         </div>
-      </div>
-    </nav>
+      )
+    }
 
-    <h1>Login success</h1>
 
-  </div>
-</body>
+    const container = document.getElementById('root');
+      const root = ReactDOM.createRoot(container);
+      root.render(<LandingPage />)
+  </script>
 </html>
