@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Sketch Page</title>
 
   <link rel="stylesheet" href="lib/bootstrap.min.css">
   <script src="lib/bootstrap.min.js"></script>
@@ -40,18 +40,11 @@
 
   <script type="text/babel">
     
-    const LandingPage = () => {
+    const ListPage = () => {
 
       const logMeOut = () => {
         logoutUser()
         window.location.href = 'loginPage.html'
-      }
-
-      const searchImage = (evt) => {
-        console.log('evt: ', evt.target.value)
-
-        // TODO
-        // - Will search through the array of image collection
       }
 
       return (
@@ -62,9 +55,9 @@
               <a className="navbar-brand" href="#">My Sketch</a>
 
               <div className="navbar-nav">
-                <a type="button" className="nav-link" href="#">Index</a>
+                <a type="button" className="nav-link" href="landingPage.html">Index</a>
                 <a type="button" className="nav-link" href="listPage.html">List</a>
-                <a type="button" className="nav-link" href="sketchPage.html">Sketch</a>
+                <a type="button" className="nav-link" href="#">Sketch</a>
                 <a type="button" className="nav-link" onClick={logMeOut}>Logout</a>
 
                 <a className="nav-link" id="user-name">Name Goes Here</a>
@@ -73,11 +66,25 @@
           </nav>
 
           <div style={{ padding: 20 }}>
-            <h1>Index | Gallery Page</h1>
+            <h1>Sketch</h1>
 
-            <input id="search" type="text" placeholder="Search..." onChange={searchImage} />
+            <form>
+              <input id="img-title" type="text" placeholder="Title" />
 
-            <p style={{ marginTop: 10 }}><span id="image-count">0</span> Sketch(es)</p>
+              <input style={{ marginLeft: 10 }} type="checkbox" id="public" name="public" value="public" />
+              <label for="public">Public</label>
+
+              <input style={{ marginLeft: 10 }} type="submit" value="Save" />
+
+              <br />
+
+              <input style={{ marginTop: 10 }} id="pen-color" type="color" />
+              <input style={{ marginTop: 10, marginLeft: 10 }} type="range" min="1" max="30" id="pen-width" />
+
+              <input style={{ marginLeft: 10 }} type="reset" />
+            </form>
+            
+            
           </div>
 
         </div>
@@ -87,6 +94,6 @@
 
     const container = document.getElementById('root');
       const root = ReactDOM.createRoot(container);
-      root.render(<LandingPage />)
+      root.render(<ListPage />)
   </script>
 </html>
