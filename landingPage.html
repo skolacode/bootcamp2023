@@ -21,7 +21,16 @@
       const userData = localStorage.getItem('loginUser')
       const user = JSON.parse(userData)
 
-      $("#user-name").html(user.name)
+      if(user) {
+        setTimeout(() => {
+          $("#user-name").html(user.name)
+        }, 1000)
+      }
+      else {
+        alert('You are not login. Please login!')
+        window.location.href = 'loginPage.html'
+      }
+
     });
   </script>
 </head>
@@ -36,6 +45,13 @@
       const logMeOut = () => {
         logoutUser()
         window.location.href = 'loginPage.html'
+      }
+
+      const searchImage = (evt) => {
+        console.log('evt: ', evt.target.value)
+
+        // TODO
+        // - Will search through the array of image collection
       }
 
       return (
@@ -53,7 +69,13 @@
             </div>
           </nav>
 
-          <h1>Login success --</h1>
+          <div style={{ padding: 20 }}>
+            <h1>Index | Gallery Page</h1>
+
+            <input id="search" type="text" placeholder="Search..." onChange={searchImage} />
+
+            <p style={{ marginTop: 10 }}><span id="image-count">0</span> Sketch(es)</p>
+          </div>
 
         </div>
       )
