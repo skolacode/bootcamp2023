@@ -45,11 +45,11 @@
     
     const ListPage = () => {
 
-      const [hi, setHi] = useState('hello')
-
       const canvaRef = useRef(null);
       const ctx = canvaRef.current ? canvaRef.current.getContext('2d') : null;
       const [isPainting, setIsPainting] = useState(false);
+      
+      
       const [lineWidth, setLineWidth] = useState(5);
 
       const logMeOut = () => {
@@ -57,7 +57,7 @@
         window.location.href = 'loginPage.html'
       }
 
-      const draw = (e) => {
+      const draw = (evt) => {
         if (!isPainting || !ctx) {
           return;
         }
@@ -65,13 +65,16 @@
         ctx.lineWidth = lineWidth;
         ctx.lineCap = 'round';
 
-        ctx.lineTo(e.clientX - canvaRef.current.offsetLeft, e.clientY - canvaRef.current.offsetTop);
+        const xOffset = evt.clientX - canvaRef.current.offsetLeft
+        const yOffset = evt.clientY - canvaRef.current.offsetTop
+
+        ctx.lineTo(xOffset, yOffset);
         ctx.stroke();
       }
 
-      const handleMouseDown = (e) => {
+      const handleMouseDown = (evt) => {
         setIsPainting(true);
-        draw(e);
+        draw(evt);
       };
 
       const handleMouseUp = () => {
@@ -79,6 +82,12 @@
         if (ctx) {
           ctx.stroke();
           ctx.beginPath();
+        }
+      };
+
+      const handleMouseMove = (evt) => {
+        if (isPainting) {
+          draw(evt);
         }
       };
 
@@ -94,21 +103,11 @@
         )
       }
 
-      const handleMouseMove = (e) => {
-        if (isPainting) {
-          draw(e);
-        }
-      };
-
-
-
       useEffect(() => {
         // drawme() // Uncomment this if needed
 
         // Add a mousemove event listener to the document
         const handleDocumentMouseMove = (e) => {
-
-          console.log('move: ', isInsideCanvas(e))
 
           if (isPainting && !isInsideCanvas(e)) {
             setIsPainting(false);
@@ -126,7 +125,77 @@
           document.removeEventListener('mousemove', handleDocumentMouseMove);
         };
       }, [ctx, isPainting]);
- 
+
+      const saveDrawingToLocalStorage = (evt) => {
+        evt.preventDefault()
+
+        // Convert the canvas content to a data URL
+        const dataURL = canvaRef.current.toDataURL();
+        
+        // Save the data URL to local storage
+        localStorage.setItem('savedDrawing', dataURL);
+
+        alert('Drawing saved')
+      };
+
+      const loadDrawingFromLocalStorage = () => {
+        // Retrieve the saved data URL from local storage
+        const savedDrawing = localStorage.getItem('savedDrawing');
+
+        const newCtx = canvaRef.current.getContext('2d')
+
+        console.log('savedDrawing: ', savedDrawing)
+        console.log('ctx: ', newCtx)
+        
+        // If a saved drawing exists, load it onto the canvas
+        if (savedDrawing) {
+          const img = new Image();
+          img.src = savedDrawing;
+          img.onload = () => {
+            if (newCtx) {
+              newCtx.drawImage(img, 0, 0);
+            }
+          };
+        }
+      };
+
+      // Handle file input change and load the selected image onto the canvas
+      const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+              const ctx = canvaRef.current.getContext('2d'); // Get ctx when needed
+              if (ctx) {
+                const aspectRatio = img.width / img.height;
+                const maxWidth = canvaRef.current.width;
+                const maxHeight = canvaRef.current.height;
+                
+                let newWidth = maxWidth;
+                let newHeight = maxWidth / aspectRatio;
+                
+                if (newHeight > maxHeight) {
+                  newHeight = maxHeight;
+                  newWidth = maxHeight * aspectRatio;
+                }
+                
+                ctx.clearRect(0, 0, canvaRef.current.width, canvaRef.current.height);
+                ctx.drawImage(img, 0, 0, newWidth, newHeight);
+              }
+            };
+          };
+          reader.readAsDataURL(file);
+        }
+      };
+
+
+      const clear = () => {
+        const ctx = canvaRef.current.getContext('2d'); // Get ctx when needed
+        context.clearRect(0, 0, ctx.width, ctx.height);
+      }
 
       return (
         <div>
@@ -147,9 +216,9 @@
           </nav>
 
           <div style={{ padding: 20 }}>
-            <h1>Sketch {hi}</h1>
+            <h1>Sketch</h1>
 
-            <form>
+            <form onSubmit={saveDrawingToLocalStorage}>
               <input id="img-title" type="text" placeholder="Title" />
 
               <input style={{ marginLeft: 10 }} type="checkbox" id="public" name="public" value="public" />
@@ -161,6 +230,8 @@
 
               <input style={{ marginTop: 10 }} id="pen-color" type="color" />
               <input style={{ marginTop: 10, marginLeft: 10 }} type="range" min="1" max="30" id="pen-width" />
+
+              <input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg" onChange={handleFileChange}/>
 
               <input style={{ marginLeft: 10 }} type="reset" />
 
@@ -179,6 +250,7 @@
 
             </form>
             
+            <button onClick={loadDrawingFromLocalStorage}>Load drawing</button>
             
           </div>
 
