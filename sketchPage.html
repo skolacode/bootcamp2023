@@ -49,7 +49,9 @@
       const ctx = canvaRef.current ? canvaRef.current.getContext('2d') : null;
       const [isPainting, setIsPainting] = useState(false);
       
-      
+      const imageName = useRef('');
+      const isPublic = useRef(false);
+
       const [lineWidth, setLineWidth] = useState(5);
 
       const logMeOut = () => {
@@ -103,9 +105,8 @@
         )
       }
 
+      // Hook
       useEffect(() => {
-        // drawme() // Uncomment this if needed
-
         // Add a mousemove event listener to the document
         const handleDocumentMouseMove = (e) => {
 
@@ -133,10 +134,45 @@
         const dataURL = canvaRef.current.toDataURL();
         
         // Save the data URL to local storage
-        localStorage.setItem('savedDrawing', dataURL);
+        const imagesData = localStorage.getItem('images');
+        let images = JSON.parse(imagesData)
+
+        const userData = localStorage.getItem('loginUser')
+        const user = JSON.parse(userData)
+
+        console.log('isPublic: ', isPublic.current)
+
+        if(images) {
+          images.push({
+            imgName: imageName.current,
+            img: dataURL,
+            username: user.name,
+            isPublic: isPublic.current
+          })
+        }
+        else {
+          images = [
+            {
+              imgName: imageName.current,
+              img: dataURL,
+              username: user.name,
+              isPublic: isPublic.current
+            }
+          ]
+        }
+
+        localStorage.setItem('images', JSON.stringify(images));
 
         alert('Drawing saved')
       };
+
+      const onChangeImageText = (evt) => {
+        imageName.current = evt.target.value
+      }
+
+      const onChangePublic = (evt) => {
+        isPublic.current = evt.target.checked
+      }
 
       const loadDrawingFromLocalStorage = () => {
         // Retrieve the saved data URL from local storage
@@ -219,9 +255,9 @@
             <h1>Sketch</h1>
 
             <form onSubmit={saveDrawingToLocalStorage}>
-              <input id="img-title" type="text" placeholder="Title" />
+              <input ref={imageName} onChange={onChangeImageText} id="img-title" type="text" placeholder="Title" />
 
-              <input style={{ marginLeft: 10 }} type="checkbox" id="public" name="public" value="public" />
+              <input ref={isPublic} style={{ marginLeft: 10 }} type="checkbox" id="public" name="public" onChange={onChangePublic} />
               <label htmlFor="public">Public</label>
 
               <input style={{ marginLeft: 10 }} type="submit" value="Save" />
