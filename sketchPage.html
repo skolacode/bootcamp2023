@@ -203,28 +203,21 @@
       // Handle file input change and load the selected image onto the canvas
       const handleFileChange = (e) => {
         const file = e.target.files[0];
+        const canvas = canvaRef.current
+        
         if (file) {
           const reader = new FileReader();
           reader.onload = (event) => {
             const img = new Image();
             img.src = event.target.result;
             img.onload = () => {
-              const ctx = canvaRef.current.getContext('2d'); // Get ctx when needed
+              const ctx = canvas.getContext('2d'); // Get ctx when needed
               if (ctx) {
-                const aspectRatio = img.width / img.height;
-                const maxWidth = canvaRef.current.width;
-                const maxHeight = canvaRef.current.height;
+                const imgWidth = img.width;
+                const imgHeight = img.height;
                 
-                let newWidth = maxWidth;
-                let newHeight = maxWidth / aspectRatio;
-                
-                if (newHeight > maxHeight) {
-                  newHeight = maxHeight;
-                  newWidth = maxHeight * aspectRatio;
-                }
-                
-                ctx.clearRect(0, 0, canvaRef.current.width, canvaRef.current.height);
-                ctx.drawImage(img, 0, 0, newWidth, newHeight);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
               }
             };
           };
@@ -295,7 +288,11 @@
                 onChange={(evt) => lineWidthRef.current = evt.target.value}
               />
 
-              <input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg" onChange={handleFileChange}/>
+              <input 
+                type="file" 
+                accept="image/*"
+                onChange={handleFileChange}
+              />
 
               <br />
 
