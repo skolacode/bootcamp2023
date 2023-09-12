@@ -45,6 +45,8 @@
     
     const ListPage = () => {
 
+      const formRef = useRef(null)
+
       const canvaRef = useRef(null);
       const ctx = canvaRef.current ? canvaRef.current.getContext('2d') : null;
       const [isPainting, setIsPainting] = useState(false);
@@ -231,9 +233,16 @@
       };
 
 
-      const clear = () => {
+      const clearCanvas = () => {
+        const canvas = canvaRef.current
+
         const ctx = canvaRef.current.getContext('2d'); // Get ctx when needed
-        context.clearRect(0, 0, ctx.width, ctx.height);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+
+      const clearForm = () => {
+        formRef.current.reset()
+        clearCanvas()
       }
 
       return (
@@ -257,7 +266,7 @@
           <div style={{ padding: 20 }}>
             <h1>Sketch</h1>
 
-            <form onSubmit={saveDrawingToLocalStorage}>
+            <form ref={formRef} onSubmit={saveDrawingToLocalStorage}>
               <input ref={imageName} onChange={onChangeImageText} id="img-title" type="text" placeholder="Title" />
 
               <input ref={isPublic} style={{ marginLeft: 10 }} type="checkbox" id="public" name="public" onChange={onChangePublic} />
@@ -288,7 +297,14 @@
 
               <input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg" onChange={handleFileChange}/>
 
-              <input style={{ marginLeft: 10 }} type="reset" />
+              <br />
+
+              <input 
+                style={{ marginTop: 10 }} 
+                type="button" 
+                value="Reset" 
+                onClick={clearForm}
+              />
 
               <div style={{ marginTop: 30, width: 400, height: 400, borderWidth: 1, borderColor: 'black', borderStyle: 'solid' }}>
                 <canvas 
