@@ -52,7 +52,7 @@
       const imageName = useRef('');
       const isPublic = useRef(false);
 
-      const [lineWidth, setLineWidth] = useState(5);
+      const lineWidthRef = useRef(5)
 
       const logMeOut = () => {
         logoutUser()
@@ -64,7 +64,7 @@
           return;
         }
 
-        ctx.lineWidth = lineWidth;
+        ctx.lineWidth = lineWidthRef.current;
         ctx.lineCap = 'round';
 
         const xOffset = evt.clientX - canvaRef.current.offsetLeft
@@ -265,7 +265,15 @@
               <br />
 
               <input style={{ marginTop: 10 }} id="pen-color" type="color" />
-              <input style={{ marginTop: 10, marginLeft: 10 }} type="range" min="1" max="30" id="pen-width" />
+              <input 
+                ref={lineWidthRef} 
+                style={{ marginTop: 10, marginLeft: 10 }} 
+                type="range" 
+                min="1" 
+                max="30" 
+                id="pen-width"
+                onChange={(evt) => lineWidthRef.current = evt.target.value}
+              />
 
               <input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg" onChange={handleFileChange}/>
 
