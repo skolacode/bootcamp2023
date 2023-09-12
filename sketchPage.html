@@ -53,6 +53,7 @@
       const isPublic = useRef(false);
 
       const lineWidthRef = useRef(5)
+      const colorRef = useRef('#000000')
 
       const logMeOut = () => {
         logoutUser()
@@ -64,11 +65,10 @@
           return;
         }
 
-        console.log('lineWidthRef.current: ', lineWidthRef.current)
-
         // teranary operator or inline if else
         ctx.lineWidth = lineWidthRef.current?.value || lineWidthRef.current;
         ctx.lineCap = 'round';
+        ctx.strokeStyle = colorRef.current?.value || colorRef.current
 
         const xOffset = evt.clientX - canvaRef.current.offsetLeft
         const yOffset = evt.clientY - canvaRef.current.offsetTop
@@ -267,7 +267,14 @@
 
               <br />
 
-              <input style={{ marginTop: 10 }} id="pen-color" type="color" />
+              <input 
+                ref={colorRef}
+                style={{ marginTop: 10 }} 
+                id="pen-color" 
+                type="color" 
+                defaultValue={'#000000'}
+                onChange={(evt) => colorRef.current = evt.target.value}
+              />
               <input 
                 ref={lineWidthRef} 
                 style={{ marginTop: 10, marginLeft: 10 }} 
