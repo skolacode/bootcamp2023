@@ -147,12 +147,15 @@
 
         console.log('isPublic: ', isPublic.current)
 
+        const date = new Date()
+
         if(images) {
           images.push({
             imgName: imageName.current,
             img: dataURL,
             username: user.name,
-            isPublic: isPublic.current === true ? true : false
+            isPublic: isPublic.current === true ? true : false,
+            createdAt: date
           })
         }
         else {
@@ -161,7 +164,8 @@
               imgName: imageName.current,
               img: dataURL,
               username: user.name,
-              isPublic: isPublic.current
+              isPublic: isPublic.current,
+              createdAt: date
             }
           ]
         }
