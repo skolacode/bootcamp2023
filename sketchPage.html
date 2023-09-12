@@ -64,7 +64,10 @@
           return;
         }
 
-        ctx.lineWidth = lineWidthRef.current;
+        console.log('lineWidthRef.current: ', lineWidthRef.current)
+
+        // teranary operator or inline if else
+        ctx.lineWidth = lineWidthRef.current?.value || lineWidthRef.current;
         ctx.lineCap = 'round';
 
         const xOffset = evt.clientX - canvaRef.current.offsetLeft
@@ -272,6 +275,7 @@
                 min="1" 
                 max="30" 
                 id="pen-width"
+                defaultValue={5}
                 onChange={(evt) => lineWidthRef.current = evt.target.value}
               />
 
