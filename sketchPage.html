@@ -155,7 +155,8 @@
             img: dataURL,
             username: user.name,
             isPublic: isPublic.current === true ? true : false,
-            createdAt: date
+            createdAt: date,
+            id: images.length+1
           })
         }
         else {
@@ -165,7 +166,8 @@
               img: dataURL,
               username: user.name,
               isPublic: isPublic.current,
-              createdAt: date
+              createdAt: date,
+              id: 1
             }
           ]
         }
