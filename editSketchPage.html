@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Sketch Page</title>
+
+  <link rel="stylesheet" href="lib/bootstrap.min.css">
+  <script src="lib/bootstrap.min.js"></script>
+  <script src="lib/jquery.slim.min.js"></script>
+
+  <script src="lib/react.development.js"></script>
+  <script src="lib/react-dom.development.js"></script>
+  <script src="lib/babel.min.js"></script>
+
+  <script src="js/localstorage.js"></script>
+  <script src="js/users.js"></script>
+  <script src="js/canvas.js" async></script>
+
+  <script>
+    $( document ).ready(function() {
+      const userData = localStorage.getItem('loginUser')
+      const user = JSON.parse(userData)
+
+      if(user) {
+        setTimeout(() => {
+          $("#user-name").html(user.name)
+        }, 0)
+      }
+      else {
+        alert('You are not login. Please login!')
+        window.location.href = 'loginPage.html'
+      }
+    });
+  </script>
+</head>
+  <body>
+    <div id="root"></div>
+  </body>
+
+  <script type="text/babel">
+
+    const { useState, useRef, useEffect } = React;
+
+    
+    const ListPage = () => {
+
+      const query = window.location.search
+      const params = new URLSearchParams(query)
+      const imgId = params.get('imgId')
+
+      const formRef = useRef(null)
+
+      const canvaRef = useRef(null);
+      const ctx = canvaRef.current ? canvaRef.current.getContext('2d') : null;
+      const [isPainting, setIsPainting] = useState(false);
+      
+      const imageName = useRef('');
+      const isPublic = useRef(false);
+
+      const lineWidthRef = useRef(5)
+      const colorRef = useRef('#000000')
+
+      const logMeOut = () => {
+        logoutUser()
+        window.location.href = 'loginPage.html'
+      }
+
+      const draw = (evt) => {
+        if (!isPainting || !ctx) {
+          return;
+        }
+
+        // teranary operator or inline if else
+        ctx.lineWidth = lineWidthRef.current?.value || lineWidthRef.current;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = colorRef.current?.value || colorRef.current
+
+        const xOffset = evt.clientX - canvaRef.current.offsetLeft
+        const yOffset = evt.clientY - canvaRef.current.offsetTop
+
+        ctx.lineTo(xOffset, yOffset);
+        ctx.stroke();
+      }
+
+      const handleMouseDown = (evt) => {
+        setIsPainting(true);
+        draw(evt);
+      };
+
+      const handleMouseUp = () => {
+        setIsPainting(false);
+        if (ctx) {
+          ctx.stroke();
+          ctx.beginPath();
+        }
+      };
+
+      const handleMouseMove = (evt) => {
+        if (isPainting) {
+          draw(evt);
+        }
+      };
+
+      const isInsideCanvas = (evt) => {
+
+        const canvas = canvaRef.current;
+
+        return (
+          evt.clientX >= canvas.offsetLeft &&
+          evt.clientX <= canvas.offsetLeft + canvas.width &&
+          evt.clientY >= canvas.offsetTop &&
+          evt.clientY <= canvas.offsetTop + canvas.height
+        )
+      }
+
+      // Hook
+      useEffect(() => {
+        // Add a mousemove event listener to the document
+        const handleDocumentMouseMove = (e) => {
+
+          if (isPainting && !isInsideCanvas(e)) {
+            setIsPainting(false);
+            if (ctx) {
+              ctx.stroke();
+              ctx.beginPath();
+            }
+          }
+        };
+
+        document.addEventListener('mousemove', handleDocumentMouseMove);
+
+        return () => {
+          // Clean up the event listener when the component unmounts
+          document.removeEventListener('mousemove', handleDocumentMouseMove);
+        };
+      }, [ctx, isPainting]);
+
+      const saveDrawingToLocalStorage = (evt) => {
+        evt.preventDefault()
+
+        // Convert the canvas content to a data URL
+        const dataURL = canvaRef.current.toDataURL();
+        
+        // Save the data URL to local storage
+        const imagesData = localStorage.getItem('images');
+        let images = JSON.parse(imagesData)
+
+        const userData = localStorage.getItem('loginUser')
+        const user = JSON.parse(userData)
+
+        const image = images.find((eachImg) => eachImg.id == imgId)
+        const imageIndex = images.findIndex((eachImg) => eachImg.id == imgId)
+
+        console.log('imageName.current: ', imageName.current)
+
+        const updatedImage = {
+          ...image,
+          isPublic: isPublic.current === true ? true : false,
+          imgName: imageName.current?.value ? imageName.current.value : imageName.current,
+          img: dataURL,
+        }
+
+        images.splice(imageIndex, 1, updatedImage)
+
+        localStorage.setItem('images', JSON.stringify(images));
+
+        alert('Drawing saved')
+      };
+
+      const onChangeImageText = (evt) => {
+        imageName.current = evt.target.value
+      }
+
+      const onChangePublic = (evt) => {
+        isPublic.current = evt.target.checked
+      }
+
+      const loadDrawingFromLocalStorage = () => {
+        // Retrieve the saved data URL from local storage
+        const imagesData = localStorage.getItem('images');
+        const images = JSON.parse(imagesData)
+
+        console.log('imagesL ', images)
+
+        if(images) {
+            const image = images.find((eachImg) => eachImg.id == imgId)
+
+            console.log('image ', image)
+
+            if(image) {
+              const newCtx = canvaRef.current.getContext('2d')
+
+              const img = new Image();
+              img.src = image.img;
+              img.onload = () => {
+                if (newCtx) {
+                  newCtx.drawImage(img, 0, 0);
+                }
+              };
+
+              imageName.current.value = image.imgName
+              isPublic.current.checked = image.isPublic
+            }
+        }
+      };
+
+      // Handle file input change and load the selected image onto the canvas
+      const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        const canvas = canvaRef.current
+        
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+              const ctx = canvas.getContext('2d'); // Get ctx when needed
+              if (ctx) {
+                const imgWidth = img.width;
+                const imgHeight = img.height;
+                
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
+              }
+            };
+          };
+          reader.readAsDataURL(file);
+        }
+      };
+
+
+      const clearCanvas = () => {
+        const canvas = canvaRef.current
+
+        const ctx = canvaRef.current.getContext('2d'); // Get ctx when needed
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+
+      const clearForm = () => {
+        formRef.current.reset()
+        clearCanvas()
+        lineWidthRef.current = 5
+        colorRef.current = '#000000'
+      }
+
+      useEffect(() => {
+        loadDrawingFromLocalStorage()
+      }, [])
+
+      return (
+        <div>
+
+          <nav className="navbar navbar-expand-lg bg-body-tertiary">
+            <div className="container-fluid">
+              <a className="navbar-brand" href="#">My Sketch</a>
+
+              <div className="navbar-nav">
+                <a type="button" className="nav-link" href="landingPage.html">Index</a>
+                <a type="button" className="nav-link" href="listPage.html">List</a>
+                <a type="button" className="nav-link" href="sketchPage.html">Sketch</a>
+                <a type="button" className="nav-link" onClick={logMeOut}>Logout</a>
+
+                <a className="nav-link" id="user-name">Name Goes Here</a>
+              </div>
+            </div>
+          </nav>
+
+          <div style={{ padding: 20 }}>
+            <h1>Edit Sketch</h1>
+
+            <form ref={formRef} onSubmit={saveDrawingToLocalStorage}>
+              <input required ref={imageName} onChange={onChangeImageText} id="img-title" type="text" placeholder="Title" />
+
+              <input ref={isPublic} style={{ marginLeft: 10 }} type="checkbox" id="public" name="public" onChange={onChangePublic} />
+              <label htmlFor="public">Public</label>
+
+              <input style={{ marginLeft: 10 }} type="submit" value="Save" />
+
+              <br />
+
+              <input 
+                ref={colorRef}
+                style={{ marginTop: 10 }} 
+                id="pen-color" 
+                type="color" 
+                defaultValue={'#000000'}
+                onChange={(evt) => colorRef.current = evt.target.value}
+              />
+              <input 
+                ref={lineWidthRef} 
+                style={{ marginTop: 10, marginLeft: 10 }} 
+                type="range" 
+                min="1" 
+                max="30" 
+                id="pen-width"
+                defaultValue={5}
+                onChange={(evt) => lineWidthRef.current = evt.target.value}
+              />
+
+              <input 
+                type="file" 
+                accept="image/*"
+                onChange={handleFileChange}
+              />
+
+              <br />
+
+              <input 
+                style={{ marginTop: 10 }} 
+                type="button" 
+                value="Reset" 
+                onClick={clearForm}
+              />
+
+              <div style={{ marginTop: 30, width: 400, height: 400, borderWidth: 1, borderColor: 'black', borderStyle: 'solid' }}>
+                <canvas 
+                  ref={canvaRef}
+                  id="canvas" 
+                  width={400} 
+                  height={400}
+                  onMouseDown={handleMouseDown}
+                  onMouseUp={handleMouseUp}
+                  onMouseMove={handleMouseMove}
+                > 
+                </canvas>
+              </div>
+
+            </form>
+          </div>
+
+        </div>
+      )
+    }
+
+
+    const container = document.getElementById('root');
+    const root = ReactDOM.createRoot(container);
+    root.render(<ListPage />)  
+  </script>
+
+</html>

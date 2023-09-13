@@ -88,7 +88,7 @@
           localStorage.setItem('images', JSON.stringify(allFilteredImg))
         }
 
-        alert('delete clicked')
+        alert('delete success')
       }
 
       useEffect(() => {
@@ -132,7 +132,13 @@
                   >
                     <button onClick={() => deleteImg(each.id)}>Delete</button>
                     <br />
-                    <img height="400" width="400" src={each.img} />
+                    <img 
+                      onClick={() => window.location.href = `editSketchPage.html?imgId=${each.id}`}
+                      height="400" 
+                      width="400" 
+                      src={each.img} 
+                      style={{ cursor: "pointer" }}
+                    />
                     <p 
                       style={{ 
                         backgroundColor: 'black', 
