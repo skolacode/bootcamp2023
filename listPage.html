@@ -62,6 +62,8 @@
         
         // deep equality
         const userImages = images.filter((imageData) => imageData.username === loginUserName)
+
+        console.log('userImages: ', userImages)
         
         setImageList(userImages)
       }
@@ -91,7 +93,32 @@
           <div style={{ padding: 20 }}>
             <h1>List</h1>
 
-            <p style={{ marginTop: 10 }}><span id="image-count">0</span> Sketch(es)</p>
+            <p style={{ marginTop: 10 }}><span id="image-count">{imageList.length}</span> Sketch(es)</p>
+
+            
+            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+              {
+                imageList.reverse().map((each) => (
+                  <div style={{ border: '1px solid black', width: 400, margin: 10 }}>
+                    <button>Delete</button>
+                    <br />
+                    <img height="400" width="400" src={each.img} />
+                    <p 
+                      style={{ 
+                        backgroundColor: 'black', 
+                        color: 'white',
+                        textAlign: 'center',
+                        textTransform: 'uppercase',
+                        opacity: 0.2,
+                        marginBottom: 0
+                      }}
+                    >
+                      {each.isPublic === true ? "+" : "-"} {each.imgName}
+                    </p>
+                  </div>
+                ))
+              }
+            </div>
             
           </div>
 
