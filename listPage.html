@@ -52,20 +52,43 @@
       }
 
       const getUserImages = () => {
-        const imageData = localStorage.getItem('images')
-        const images = JSON.parse(imageData)
 
         // Filter only user data
         const logginUserData = localStorage.getItem('loginUser')
         const loginUser = JSON.parse(logginUserData)
         const loginUserName = loginUser.name
+
+        const imageData = localStorage.getItem('images')
+        const images = JSON.parse(imageData)
         
         // deep equality
-        const userImages = images.filter((imageData) => imageData.username === loginUserName)
+        if(images) {
 
-        console.log('userImages: ', userImages)
-        
-        setImageList(userImages)
+          const userImages = images.filter((imageData) => imageData.username === loginUserName)
+          
+          console.log('userImages: ', userImages)
+          
+          setImageList(userImages.reverse())
+        }
+      }
+
+      const deleteImg = (imgId) => {
+
+        const filteredImg = imageList.filter((eachImg) => eachImg.id !== imgId)
+
+        setImageList(filteredImg)
+
+        const imageData = localStorage.getItem('images')
+        const images = JSON.parse(imageData)
+
+        if(images) {
+
+          const allFilteredImg = images.filter((eachImg) => eachImg.id !== imgId)
+
+          localStorage.setItem('images', JSON.stringify(allFilteredImg))
+        }
+
+        alert('delete clicked')
       }
 
       useEffect(() => {
@@ -98,9 +121,16 @@
             
             <div style={{ display: 'flex', flexWrap: 'wrap' }}>
               {
-                imageList.reverse().map((each) => (
-                  <div style={{ border: '1px solid black', width: 400, margin: 10 }}>
-                    <button>Delete</button>
+                imageList.map((each) => (
+                  <div
+                    style={{ 
+                      border: '1px solid black', 
+                      width: 400, 
+                      margin: 10 
+                    }}
+                    key={each.createdAt}
+                  >
+                    <button onClick={() => deleteImg(each.id)}>Delete</button>
                     <br />
                     <img height="400" width="400" src={each.img} />
                     <p 
