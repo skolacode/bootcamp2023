@@ -39,13 +39,36 @@
   </body>
 
   <script type="text/babel">
+
+    const { useEffect, useState } = React
     
     const ListPage = () => {
+
+      const [imageList, setImageList] = useState([])
 
       const logMeOut = () => {
         logoutUser()
         window.location.href = 'loginPage.html'
       }
+
+      const getUserImages = () => {
+        const imageData = localStorage.getItem('images')
+        const images = JSON.parse(imageData)
+
+        // Filter only user data
+        const logginUserData = localStorage.getItem('loginUser')
+        const loginUser = JSON.parse(logginUserData)
+        const loginUserName = loginUser.name
+        
+        // deep equality
+        const userImages = images.filter((imageData) => imageData.username === loginUserName)
+        
+        setImageList(userImages)
+      }
+
+      useEffect(() => {
+        getUserImages()
+      }, [])
 
       return (
         <div>
