@@ -24,7 +24,7 @@
       if(user) {
         setTimeout(() => {
           $("#user-name").html(user.name)
-        }, 1000)
+        }, 0)
       }
       else {
         alert('You are not login. Please login!')
@@ -39,8 +39,18 @@
   </body>
 
   <script type="text/babel">
+
+    const { useEffect, useState, useRef } = React
     
     const LandingPage = () => {
+
+      const modalRef = useRef(null)
+
+      // Source of truth
+      const [imageList, setImageList] = useState([])
+      const [cloneImageList, setCloneImageList] = useState([])
+
+      const [imageToView, setImageToView] = useState(null)
 
       const logMeOut = () => {
         logoutUser()
@@ -49,10 +59,51 @@
 
       const searchImage = (evt) => {
         console.log('evt: ', evt.target.value)
+        const searchedTitle = evt.target.value.toUpperCase()
 
-        // TODO
-        // - Will search through the array of image collection
+        const filteredData = imageList.filter((each) => each.imgName.toUpperCase().includes(searchedTitle))
+
+        setCloneImageList(filteredData)
       }
+
+      const getUserImages = () => {
+
+        const imageData = localStorage.getItem('images')
+        const images = JSON.parse(imageData)
+
+        // deep equality
+        if(images) {
+
+          const publicImage = images.filter((imageData) => imageData.isPublic === true)
+
+          publicImage.reverse()
+      
+          setImageList(publicImage)
+          setCloneImageList(publicImage)
+        }
+      }
+
+      const viewImage = (imageData) => {
+        setImageToView(imageData)
+
+        if (modalRef.current) {
+          const modal = new bootstrap.Modal(modalRef.current);
+          modal.show();
+        }
+      }
+
+      
+      const closeModal = (evt) => {
+        if (modalRef.current) {
+          const modal = bootstrap.Modal.getInstance(modalRef.current);
+          modal.hide();
+        }
+      };
+
+
+      useEffect(() => {
+        getUserImages()
+      }, [])
 
       return (
         <div>
@@ -77,13 +128,92 @@
 
             <input id="search" type="text" placeholder="Search..." onChange={searchImage} />
 
-            <p style={{ marginTop: 10 }}><span id="image-count">0</span> Sketch(es)</p>
-          </div>
+            <p style={{ marginTop: 10 }}><span id="image-count">{cloneImageList.length}</span> Sketch(es)</p>
 
+            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+              {
+                cloneImageList.map((each) => (
+                  <div
+                    style={{ 
+                      border: '1px solid black', 
+                      width: 400, 
+                      margin: 10 
+                    }}
+                    key={each.createdAt}
+                  >
+                    <img 
+                      height="400" 
+                      width="400" 
+                      src={each.img} 
+                      style={{ cursor: "pointer" }}
+                      onClick={() => viewImage(each)}
+                    />
+                    <p 
+                      style={{ 
+                        backgroundColor: 'black', 
+                        color: 'white',
+                        textAlign: 'center',
+                        textTransform: 'uppercase',
+                        opacity: 0.2,
+                        marginBottom: 0
+                      }}
+                    >
+                      {each.imgName}
+                    </p>
+                  </div>
+                ))
+              }
+            </div>
+
+            <div ref={modalRef} className="modal fade" id="imageModal">
+              <div className="modal-dialog">
+                { imageToView !== null &&
+                  <div className="modal-content">
+                    <div className="modal-header">
+                      <p>Hello Modal</p>
+                      <button className="btn btn-danger" onClick={closeModal}>Close</button>
+                    </div>
+                            
+                    <div className="modal-body">
+                      <div
+                        style={{ 
+                          border: '1px solid black', 
+                          width: 400, 
+                          margin: 10 
+                        }}
+                        key={imageToView.createdAt}
+                      >
+                        <img 
+                          height="400" 
+                          width="400" 
+                          src={imageToView.img} 
+                          style={{ cursor: "pointer" }}
+                        />
+                        <p 
+                          style={{ 
+                            backgroundColor: 'black', 
+                            color: 'white',
+                            textAlign: 'center',
+                            textTransform: 'uppercase',
+                            opacity: 0.2,
+                            marginBottom: 0
+                          }}
+                        >
+                          {imageToView.imgName}
+                        </p>
+                      </div>
+                    </div>
+                          
+                    <div className="modal-footer">
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
         </div>
       )
     }
-
 
     const container = document.getElementById('root');
       const root = ReactDOM.createRoot(container);
