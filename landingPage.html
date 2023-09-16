@@ -26,11 +26,6 @@
           $("#user-name").html(user.name)
         }, 0)
       }
-      else {
-        alert('You are not login. Please login!')
-        window.location.href = 'loginPage.html'
-      }
-
     });
   </script>
 </head>
@@ -45,6 +40,9 @@
     const LandingPage = () => {
 
       const modalRef = useRef(null)
+
+      const userData = localStorage.getItem('loginUser')
+      const isLogin = JSON.parse(userData)
 
       // Source of truth
       const [imageList, setImageList] = useState([])
@@ -112,11 +110,23 @@
 
               <div className="navbar-nav">
                 <a type="button" className="nav-link" href="#">Index</a>
-                <a type="button" className="nav-link" href="listPage.html">List</a>
-                <a type="button" className="nav-link" href="sketchPage.html">Sketch</a>
-                <a type="button" className="nav-link" onClick={logMeOut}>Logout</a>
 
-                <a className="nav-link" id="user-name">Name Goes Here</a>
+                {
+                  isLogin?.name 
+                  ?
+                  <>
+                    <a type="button" className="nav-link" href="listPage.html">List</a>
+                    <a type="button" className="nav-link" href="sketchPage.html">Sketch</a>
+                    <a type="button" className="nav-link" onClick={logMeOut}>Logout</a>
+                    
+                    <a className="nav-link" id="user-name">Name Goes Here</a>
+                  </>
+                  :
+                  <>
+                    <a className="nav-link" href="loginPage.html">Login</a>
+                    <a className="nav-link" href="registerPage.html">Register</a>
+                  </>
+                }
               </div>
             </div>
           </nav>
