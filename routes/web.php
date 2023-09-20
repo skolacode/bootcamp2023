@@ -15,10 +15,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('app');
-})->name('home');
-
 Route::middleware('guest')->group(function () {
 
     Route::get('/login', function () {
@@ -35,6 +31,14 @@ Route::middleware('guest')->group(function () {
 
 
 Route::middleware('auth')->group(function () {
+
+    Route::get('/', function () {
+        return view('app');
+    })->name('home');
+
+    Route::get('/profile', [UserController::class, 'user'])->name('user');
+
+    Route::post('/upload', [UserController::class, 'uploadAvatar'])->name('upload-avatar');
 
     Route::get('/logout', function() {
         Auth::logout();

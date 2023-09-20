@@ -44,4 +44,26 @@ class UserController extends Controller
 
         return redirect('/login')->with('success', 'Registration successful. You can now log in.');
     }
+
+    public function user() {
+        $user = Auth::user();
+
+        return view('profile', [ 'username' => $user->username ]);
+    }
+
+    public function uploadAvatar(Request $request) {
+
+         // Validate the uploaded file
+        $request->validate([
+            'avatar' => ['required','image'],
+        ]);
+
+        // Generate a unique filename for the image
+        $filename = Auth::user()->username. '.jpg';
+
+        // Store the uploaded file in the public/images folder
+        $request->file('avatar')->storeAs('public/avatar', $filename);
+
+        return redirect('/');
+    }
 }
