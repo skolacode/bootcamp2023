@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ChatController extends Controller
 {
@@ -29,6 +30,7 @@ class ChatController extends Controller
             $randomName = $file->hashName();
             
             $request->file('image')->storeAs('public/images', $randomName);
+            $request->file('image')->storeAs('images', $randomName);
 
             $img_path = 'images/'.$randomName;
         }
@@ -48,6 +50,15 @@ class ChatController extends Controller
 
         return response()->json([
             'chats' => $chats
+        ]);
+    }
+
+    public function allImages() {
+        $files = Storage::files('/images');
+
+
+        return response()->json([
+            'images' => $files
         ]);
     }
 }

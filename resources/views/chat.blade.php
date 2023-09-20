@@ -31,7 +31,24 @@
                 <input type="file" name="image" id="image" value="Image" accept="image/*">
             </form>
             <br>
-            <button>Gallery</button>
+            <button data-bs-toggle="modal" data-bs-target="#galleryModal">Gallery</button>
+        </div>
+    </div>
+
+    <div class="modal fade" id="galleryModal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Gallery</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="images">
+
+                    </div>
+                </div>
+            
+            </div>
         </div>
     </div>
 
@@ -159,6 +176,39 @@
         // Scroll to the bottom of the element
         $scrollableElement.scrollTop($scrollableElement.prop('scrollHeight')+100);
     }
+
+    function fetchAllImages() {
+
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:80/all-images", // Replace with your API endpoint
+            success: function(response) {
+                // Handle the API response here
+                const data = response.images
+
+                var dataContainer = $('#images');
+
+                // Clear any existing content in the div
+                dataContainer.empty();
+
+                data.forEach(function(image) {
+
+
+                    let imageData = $('<img>').attr('src', '/storage/'+image).attr('alt', 'User Image').attr('height', 150).attr('width', 150).css({
+                        'margin': '5px'
+                    });
+                    
+                    // // Append the list to the div
+                    dataContainer.append(imageData);
+                });
+
+            }
+        });
+    }
+
+    fetchAllImages()
+
+    setInterval(fetchAllImages, 3000);
 </script>
 
 @endsection

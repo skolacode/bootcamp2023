@@ -51,4 +51,5 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/online-users', [UserController::class, 'onlineUsers']);
 Route::get('/chats', [ChatController::class, 'allChats']);
+Route::get('/all-images', [ChatController::class, 'allImages']);
 
