@@ -138,6 +138,10 @@
                     chats.append(chatList);
                 });
 
+                setTimeout(() => {
+                    scrolltoBottom()
+                }, 100);
+
             }
         });
     }
@@ -147,6 +151,14 @@
 
     // Set up a setInterval to call fetchData every 3 seconds (5000 milliseconds)
     setInterval(fetchChats, 3000);
+
+    function scrolltoBottom() {
+        // Assuming you have an element with the ID 'scrollableElement' that you want to scroll to the bottom of
+        var $scrollableElement = $('#chats');
+        
+        // Scroll to the bottom of the element
+        $scrollableElement.scrollTop($scrollableElement.prop('scrollHeight')+100);
+    }
 </script>
 
 @endsection
