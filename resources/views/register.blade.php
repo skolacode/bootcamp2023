@@ -1,13 +1,13 @@
 @extends('app')
 
-@section('title', 'Login Page')
+@section('title', 'Register Page')
 
 @section('content')
 
 <div class="container">
     
     <div class="card">
-        <div class="card-header">Login</div>
+        <div class="card-header">Register</div>
 
         <div class="card-body">
 
@@ -52,7 +52,7 @@
 
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary">
-                        Login
+                        Register
                     </button>
                 </div>
             </form>
