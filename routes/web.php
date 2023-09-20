@@ -36,6 +36,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/', [ChatController::class, 'chats'])->name('home');
 
+    Route::post('/chat', [ChatController::class, 'create'])->name('create-chat');
+
     Route::get('/profile', [UserController::class, 'user'])->name('user');
 
     Route::post('/upload', [UserController::class, 'uploadAvatar'])->name('upload-avatar');
@@ -47,5 +49,6 @@ Route::middleware('auth')->group(function () {
     })->name('logout');
 });
 
-Route::get('/online-users', [UserController::class, 'onlineUsers'])->name('online-users');
+Route::get('/online-users', [UserController::class, 'onlineUsers']);
+Route::get('/chats', [ChatController::class, 'allChats']);
 
