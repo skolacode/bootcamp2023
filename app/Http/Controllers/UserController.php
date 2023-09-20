@@ -16,12 +16,13 @@ class UserController extends Controller
 
         // Attempt to log in the user
         $credentials = $request->only('email', 'password');
+
         if (Auth::attempt($credentials)) {
             // Authentication was successful
             return redirect()->intended('/dashboard'); // Redirect to the intended URL or a default dashboard
         }
 
         // Authentication failed
-        return back()->withErrors(['email' => 'Invalid credentials'])->withInput();
+        return back()->withErrors(['email' => 'Email dan Password tidak sah'])->withInput();
     }
 }
