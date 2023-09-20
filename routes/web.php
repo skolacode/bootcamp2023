@@ -32,5 +32,5 @@ Route::post('/register', [UserController::class, 'register'])->name('auth-regist
 
 Route::get('/logout', function() {
     Auth::logout();
-    return redirect()->to('login');
+    return redirect('/login');
 })->name('logout');
