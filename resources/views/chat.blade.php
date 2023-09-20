@@ -146,7 +146,7 @@
     fetchChats();
 
     // Set up a setInterval to call fetchData every 3 seconds (5000 milliseconds)
-    setInterval(fetchChats, 10000);
+    setInterval(fetchChats, 3000);
 </script>
 
 @endsection
