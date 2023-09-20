@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\UserController;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -32,17 +34,18 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
 
-    Route::get('/', function () {
-        return view('app');
-    })->name('home');
+    Route::get('/', [ChatController::class, 'chats'])->name('home');
 
     Route::get('/profile', [UserController::class, 'user'])->name('user');
 
     Route::post('/upload', [UserController::class, 'uploadAvatar'])->name('upload-avatar');
 
     Route::get('/logout', function() {
+        User::where('username', Auth::user()->username)->update(['loggedIn' => 0]);
         Auth::logout();
         return redirect('/login');
     })->name('logout');
-
 });
+
+Route::get('/online-users', [UserController::class, 'onlineUsers'])->name('online-users');
+

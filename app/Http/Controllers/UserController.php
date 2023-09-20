@@ -21,6 +21,9 @@ class UserController extends Controller
 
         if (Auth::attempt($credentials)) {
             // Authentication was successful
+
+            User::where('username', $request->username)->update(['loggedIn' => 1]);
+
             return redirect()->intended('/');
         }
 
@@ -41,6 +44,8 @@ class UserController extends Controller
             'username' => $request->username,
             'password' => Hash::make($request->password),
         ]);
+
+        User::where('username', $request->username)->update(['loggedIn' => 1]);
 
         return redirect('/login')->with('success', 'Registration successful. You can now log in.');
     }
@@ -65,5 +70,13 @@ class UserController extends Controller
         $request->file('avatar')->storeAs('public/avatar', $filename);
 
         return redirect('/');
+    }
+
+    public function onlineUsers() {
+        $users = User::where('loggedIn', 1)->get();
+
+        return response()->json([
+            'users' => $users
+        ]);
     }
 }
