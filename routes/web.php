@@ -17,20 +17,28 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('app');
+})->name('home');
+
+Route::middleware('guest')->group(function () {
+
+    Route::get('/login', function () {
+        return view('login');
+    })->name('login');
+
+    Route::get('/register', function () {
+        return view('register');
+    })->name('register');
+
+    Route::post('/login', [UserController::class, 'login'])->name('auth-login');
+    Route::post('/register', [UserController::class, 'register'])->name('auth-register');
 });
 
-Route::get('/login', function () {
-    return view('login');
+
+Route::middleware('auth')->group(function () {
+
+    Route::get('/logout', function() {
+        Auth::logout();
+        return redirect('/login');
+    })->name('logout');
+
 });
-
-Route::get('/register', function () {
-    return view('register');
-});
-
-Route::post('/login', [UserController::class, 'login'])->name('auth-login');
-Route::post('/register', [UserController::class, 'register'])->name('auth-register');
-
-Route::get('/logout', function() {
-    Auth::logout();
-    return redirect('/login');
-})->name('logout');

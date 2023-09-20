@@ -21,7 +21,7 @@ class UserController extends Controller
 
         if (Auth::attempt($credentials)) {
             // Authentication was successful
-            return redirect()->intended('/dashboard'); // Redirect to the intended URL or a default dashboard
+            return redirect()->intended('/');
         }
 
         // Authentication failed
